@@ -48,3 +48,29 @@ def test_age_difference():
 def test_missing_match_data():
     with pytest.raises(ValueError, match="career match data"):
         _extract_matches("not valid tennis data")
+
+
+from tennis_age.data import _extract_birth_date, _normalize_player_name
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        ("serena williams", "SerenaWilliams"),
+        ("Serena Williams", "SerenaWilliams"),
+        ("SerenaWilliams", "SerenaWilliams"),
+        ("Rafael Nadal", "RafaelNadal"),
+    ],
+)
+def test_normalize_player_name(name, expected):
+    assert _normalize_player_name(name) == expected
+
+
+def test_empty_player_name():
+    with pytest.raises(ValueError, match="cannot be empty"):
+        _normalize_player_name("")
+
+
+def test_extract_birth_date():
+    html = "var dob = 19860603;"
+    assert _extract_birth_date(html) == "19860603"
